@@ -1,0 +1,106 @@
+# Example Configuration File for Tradeovate Trading Bot
+
+# Trading mode: "live" or "simulation"
+mode: "simulation"
+
+# Account ID for live trading (required for live mode)
+account_id: null
+
+# Initial capital for backtesting and simulation
+initial_capital: 100000.0
+
+# Commission rate per trade (percentage)
+commission_rate: 0.0
+
+# Slippage per trade (percentage)
+slippage: 0.0
+
+# Status logging interval in minutes
+status_interval_minutes: 15
+
+# Simulation settings
+simulation_speed: 1.0  # Speed multiplier (higher = faster)
+simulation_data_dir: "data"  # Directory containing historical data files
+
+# API configuration (required for live mode)
+api:
+  username: ""  # Tradeovate username
+  password: ""  # Tradeovate password
+  app_id: ""    # Application ID
+  app_version: "1.0"
+  cid: 0        # Client ID provided by Tradeovate
+  sec: ""       # Secret key provided by Tradeovate
+  device_id: null  # Optional device identifier
+  use_live: false  # Whether to use live environment (true) or demo (false)
+  token_refresh_margin: 300  # Seconds before token expiry to refresh
+  max_retries: 3    # Maximum number of API call retries
+  retry_delay: 2    # Delay between retries in seconds
+
+# Risk management settings
+risk:
+  max_position_size: 1  # Maximum position size in contracts
+  max_positions: 3      # Maximum number of open positions
+  max_drawdown_pct: 5.0  # Maximum drawdown percentage allowed
+  max_daily_loss_pct: 2.0  # Maximum daily loss percentage allowed
+  max_trade_risk_pct: 1.0  # Maximum risk percentage per trade
+  
+  # Position sizing method: "fixed", "percent_risk", or "kelly"
+  position_size_method: "fixed"
+  kelly_fraction: 0.5  # Fraction of Kelly criterion to use (0.0 to 1.0)
+  
+  # Stop loss settings
+  use_stop_loss: true
+  stop_loss_atr_multiple: 2.0  # Stop loss as multiple of ATR
+  fixed_stop_loss_pct: 1.0  # Fixed stop loss percentage
+  
+  # Trailing stop settings
+  use_trailing_stop: true
+  trailing_stop_atr_multiple: 1.5  # Trailing stop as multiple of ATR
+  fixed_trailing_stop_pct: 0.75  # Fixed trailing stop percentage
+  
+  # Take profit settings
+  use_take_profit: true
+  take_profit_atr_multiple: 3.0  # Take profit as multiple of ATR
+  fixed_take_profit_pct: 2.0  # Fixed take profit percentage
+  
+  # Maximum time to keep a position open in minutes
+  max_open_time_minutes: 240
+
+# Trading strategies
+strategies:
+  # Momentum strategy for ES futures
+  - type: "momentum"
+    symbol: "ES"
+    name: "ES Momentum"
+    parameters:
+      fast_period: 10
+      slow_period: 30
+      signal_threshold: 0.0005
+      stop_loss_pct: 0.5
+      take_profit_pct: 1.0
+      use_trailing_stop: true
+      trailing_stop_pct: 0.3
+  
+  # Mean reversion strategy for NQ futures
+  - type: "mean_reversion"
+    symbol: "NQ"
+    name: "NQ Mean Reversion"
+    parameters:
+      lookback_period: 20
+      std_dev_threshold: 2.0
+      exit_threshold: 0.5
+      stop_loss_pct: 0.75
+      take_profit_pct: 1.5
+  
+  # Breakout strategy for CL futures
+  - type: "breakout"
+    symbol: "CL"
+    name: "CL Breakout"
+    parameters:
+      breakout_period: 20
+      confirmation_period: 3
+      volatility_filter: true
+      volatility_period: 10
+      volatility_threshold: 1.5
+      stop_loss_pct: 1.0
+      take_profit_pct: 2.0
