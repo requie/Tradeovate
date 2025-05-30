@@ -96,6 +96,8 @@ def main():
                         help='Logging level')
     parser.add_argument('--log-file', default='logs/trading_bot.log', help='Path to log file')
     parser.add_argument('--port', type=int, default=8000, help='Port for the API server')
+    parser.add_argument('--ssl-keyfile', default='certs/key.pem', help='Path to SSL key file')
+    parser.add_argument('--ssl-certfile', default='certs/cert.pem', help='Path to SSL certificate file')
     parser.add_argument('--version', action='version', version='Tradeovate Trading Bot v1.0.0')
     args = parser.parse_args()
     
@@ -124,9 +126,22 @@ def main():
         # Create trading engine
         trading_engine = TradingEngine(args.config)
         
-        # Start the FastAPI server
-        logger.info(f"Starting API server on port {args.port}")
-        uvicorn.run(app, host="0.0.0.0", port=args.port)
+        # Ensure SSL certificate and key files exist
+        if not os.path.exists(args.ssl_keyfile) or not os.path.exists(args.ssl_certfile):
+            logger.error("SSL certificate or key file not found. Please ensure both files exist:")
+            logger.error(f"Key file: {args.ssl_keyfile}")
+            logger.error(f"Certificate file: {args.ssl_certfile}")
+            return 1
+        
+        # Start the FastAPI server with SSL
+        logger.info(f"Starting HTTPS API server on port {args.port}")
+        uvicorn.run(
+            app,
+            host="0.0.0.0",
+            port=args.port,
+            ssl_keyfile=args.ssl_keyfile,
+            ssl_certfile=args.ssl_certfile
+        )
         
         return 0
         
