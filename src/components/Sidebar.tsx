@@ -13,7 +13,7 @@ interface SidebarProps {
 
 export default function Sidebar({ open, setOpen }: SidebarProps) {
   const navigation = [
-    { name: 'Dashboard', href: '/', icon: HomeIcon },
+    { name: 'Dashboard', href: '/dashboard', icon: HomeIcon },
     { name: 'Configuration', href: '/configuration', icon: WrenchScrewdriverIcon },
     { name: 'Monitoring', href: '/monitoring', icon: ChartBarIcon },
     { name: 'Settings', href: '/settings', icon: Cog6ToothIcon },
