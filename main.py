@@ -96,8 +96,8 @@ def main():
                         help='Logging level')
     parser.add_argument('--log-file', default='logs/trading_bot.log', help='Path to log file')
     parser.add_argument('--port', type=int, default=8000, help='Port for the API server')
-    parser.add_argument('--ssl-keyfile', default='certs/key.pem', help='Path to SSL key file')
-    parser.add_argument('--ssl-certfile', default='certs/cert.pem', help='Path to SSL certificate file')
+    parser.add_argument('--ssl-keyfile', help='Path to SSL key file')
+    parser.add_argument('--ssl-certfile', help='Path to SSL certificate file')
     parser.add_argument('--version', action='version', version='Tradeovate Trading Bot v1.0.0')
     args = parser.parse_args()
     
@@ -126,22 +126,34 @@ def main():
         # Create trading engine
         trading_engine = TradingEngine(args.config)
         
-        # Ensure SSL certificate and key files exist
-        if not os.path.exists(args.ssl_keyfile) or not os.path.exists(args.ssl_certfile):
-            logger.error("SSL certificate or key file not found. Please ensure both files exist:")
-            logger.error(f"Key file: {args.ssl_keyfile}")
-            logger.error(f"Certificate file: {args.ssl_certfile}")
-            return 1
+        # Check if SSL files are provided and exist
+        use_ssl = False
+        if args.ssl_keyfile and args.ssl_certfile:
+            if os.path.exists(args.ssl_keyfile) and os.path.exists(args.ssl_certfile):
+                use_ssl = True
+                logger.info("SSL certificates found, starting HTTPS server")
+            else:
+                logger.warning("SSL certificates not found, falling back to HTTP")
+        else:
+            logger.info("SSL certificates not provided, using HTTP")
         
-        # Start the FastAPI server with SSL
-        logger.info(f"Starting HTTPS API server on port {args.port}")
-        uvicorn.run(
-            app,
-            host="0.0.0.0",
-            port=args.port,
-            ssl_keyfile=args.ssl_keyfile,
-            ssl_certfile=args.ssl_certfile
-        )
+        # Start the server with or without SSL
+        server_config = {
+            "app": app,
+            "host": "0.0.0.0",
+            "port": args.port
+        }
+        
+        if use_ssl:
+            server_config.update({
+                "ssl_keyfile": args.ssl_keyfile,
+                "ssl_certfile": args.ssl_certfile
+            })
+            logger.info(f"Starting HTTPS API server on port {args.port}")
+        else:
+            logger.info(f"Starting HTTP API server on port {args.port}")
+        
+        uvicorn.run(**server_config)
         
         return 0
         
