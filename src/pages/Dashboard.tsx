@@ -15,18 +15,23 @@ export default function Dashboard() {
   const [performance, setPerformance] = useState([])
 
   const { data: botStats, isLoading } = useQuery('botStats', async () => {
-    const response = await fetch('/api/stats')
+    const response = await fetch('http://localhost:8000/api/stats')
+    if (!response.ok) {
+      throw new Error('Network response was not ok')
+    }
     return response.json()
   })
 
   const toggleBot = async () => {
     const newStatus = botStatus === 'running' ? 'stopped' : 'running'
-    await fetch('/api/bot/status', {
+    const response = await fetch('http://localhost:8000/api/bot/status', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status: newStatus })
     })
-    setBotStatus(newStatus)
+    if (response.ok) {
+      setBotStatus(newStatus)
+    }
   }
 
   return (
