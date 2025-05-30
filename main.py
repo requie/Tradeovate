@@ -23,7 +23,10 @@ app = FastAPI(title="Tradeovate Trading Bot API")
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # Frontend dev server
+    allow_origins=[
+        "http://localhost:5173",  # Frontend dev server HTTP
+        "https://localhost:5173"  # Frontend dev server HTTPS
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
