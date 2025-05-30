@@ -19,7 +19,10 @@
     "@heroicons/react": "^2.1.1",
     "react-query": "^3.39.3",
     "recharts": "^2.10.3",
-    "zustand": "^4.4.7"
+    "zustand": "^4.4.7",
+    "framer-motion": "^10.16.16",
+    "react-intersection-observer": "^9.5.3",
+    "react-scroll": "^1.9.0"
   },
   "scripts": {
     "dev": "vite",
